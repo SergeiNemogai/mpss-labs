@@ -1,0 +1,105 @@
+; a = 0,8
+; b = 0,7
+; m*10^3 = 3
+; n*10^2 = 4
+
+
+cmdlen	VARIABLE (duniform(1,1400,6000))
+; Длины сообщений – команд равномерно распределены в интервале
+; 1400–6000 байт.(дискретно-равномерное распределение)
+msglen	VARIABLE (normal(2,3000,400))
+; Длины остальных сообщений (иная информация) распределены
+; по нормальному закону с параметрами m и n байт
+
+len	FUNCTION P1,E2
+1,v$msglen/2,v$cmdlen
+; В качестве значения переменной используется СЧА
+; во втором операнде указывается символ Е.
+; При соответствующем значении аргумента P1 вычисляется
+; значение случайной переменной функции len
+; через арифметические переменные
+
+
+get_pr FUNCTION P1,D2
+1,1/2,2
+; дискретная функция(D2 - 5 узловых точек) get_pr,
+; аргументом является первый параметр транзакта
+; параметр 1 принимает значения 1,2
+; функция get_pr – 1,2
+
+
+channels STORAGE 2
+; сообщения передаются по двум каналам передачи данных
+
+bufer STORAGE 1048576
+; Для хранения сообщений, ожидающих обработки в комплексе,
+; предусмотрен накопитель емкостью 1 Мб.
+
+INITIAL	x$msg1,0
+; x$msg1 - СЧА(ячейка)
+; 0 - первоначальное значение
+INITIAL	x$msg2,0
+INITIAL	x$cmd1,0
+INITIAL	x$cmd2,0
+INITIAL	x$msgres
+INITIAL	x$cmdres
+
+	GENERATE (exponential(4,0,1))
+	TRANSFER ,to_start
+	; режим безусловной передачи
+	; транзакт, вошедший в данный блок,
+	; направляется в оператор с меткой to_start
+	GENERATE (exponential(5,0,1))
+	TRANSFER ,to_start
+	GENERATE (exponential(6,0,1))
+
+to_start ASSIGN 1,(duniform(3,1,2))
+	ASSIGN 2,fn$len
+	PRIORITY fn$get_pr
+
+	TEST E p1,1,to_cmd
+	; режим условного перехода
+	; транзакт пойдет дальше, когда содержимое первого параметра
+	; будет равно 1, иначе пойдет по метке to_cmd
+	SAVEVALUE msg1+,1
+	; сохраняет значение (режим приращения)
+	; значение msg1 будет увеличиваться на 1
+
+	TRANSFER ,lin
+to_cmd	SAVEVALUE cmd1+,1
+
+
+lin	TEST G R$bufer,p2,over
+	ENTER bufer,p2
+	; занимает МКУ
+	; bufer - название МКУ
+	; p2 - количество каналов
+	LINK qwe,pr,SEND
+	;Ввод транзактов в список пользователя
+	;qwe - имя списка;
+	;pr - место списка, куда направляется транзакт
+	;(в порядке убывания приоритета)
+   	;SEND - альтернативный блок.
+
+SEND LEAVE bufer,p2
+	ENTER channels
+	ADVANCE (p2/1024)
+	LEAVE channels
+	
+	TEST E p1,1,to_cmd2
+	SAVEVALUE msg2+,1
+	TRANSFER ,unl
+to_cmd2	SAVEVALUE cmd2+,1
+	
+unl	UNLINK qwe,SEND,R$channels
+; вывод из списка пользователя
+; qwe - имя списка
+; SEND - метка, по которой направляются выведенные из СП транзакты
+; R$channels - число выводимых из СП транзактов
+
+over TERMINATE
+	GENERATE (60#60)
+	SAVEVALUE  msgres,(msg2/msg1)
+	SAVEVALUE cmdres,(cmd2/cmd1)
+	TERMINATE 1
+	START 1
