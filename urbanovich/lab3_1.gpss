@@ -1,0 +1,23 @@
+MASTERS STORAGE 2;
+INITIAL x$Detail,120; c init details
+
+GENERATE (POISSON (1,50));
+ASSIGN 1,(DUNIFORM (2,3,7)); broken details
+ENTER MASTERS;
+ADVANCE (DUNIFORM (3,8,9)); detail checkup e-f minutes
+
+REPAIR  TEST g x$Detail,0; check if Detail == 0
+        SAVEVALUE Detail-,1;
+        ADVANCE (normal (4,4,0.5)); changing detail a +- 0.5 minutes
+
+LOOP 1,REPAIR;
+LEAVE MASTERS;
+TERMINATE;
+
+GENERATE 1440;
+SAVEVALUE Detail,140; add d details every 24 hours
+TERMINATE;
+
+GENERATE 43200; 30 days
+TERMINATE 1;
+start 1;

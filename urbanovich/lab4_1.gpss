@@ -1,0 +1,35 @@
+BottleWayTime           EQU 20;
+PlatformBackWayTime     EQU 20;
+PlatformContentCount    EQU 25;
+WorkTime                EQU (5#3#8#60#60);
+
+BottleTraffic   VARIABLE (EXPONENTIAL(1,0,4));
+FillBottle      VARIABLE (UNIFORM(2,28,32));
+LabelBottle     VARIABLE (UNIFORM(3,6,10));
+
+Platform        STORAGE 8;
+
+GENERATE  ,,,1;
+GENERATE_BOTTLE ADVANCE v$BottleTraffic;
+    SPLIT       1,GENERATE_BOTTLE;
+    ASSEMBLE    PlatformContentCount;
+    ASSIGN      1,PlatformContentCount;
+    ENTER       Platform;
+    ADVANCE     BottleWayTime;
+    ADVANCE     v$FillBottle;
+    ADVANCE     BottleWayTime;
+
+MAKE_LABEL ADVANCE v$LabelBottle;
+    LOOP        1,MAKE_LABEL;
+    ADVANCE     BottleWayTime;
+    ADVANCE     PlatformBackWayTime;
+    LEAVE       Platform;
+    ASSEMBLE    6;
+    TERMINATE;
+
+GENERATE WorkTime;
+TERMINATE 1;
+START 1;
+
+CLEAR;
+START 1;

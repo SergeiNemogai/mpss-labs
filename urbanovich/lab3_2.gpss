@@ -1,0 +1,35 @@
+DeviceEntrance  VARIABLE (UNIFORM(1,6,10));
+BlockRepair     VARIABLE (EXPONENTIAL(2,0,10));
+BlockSetting    VARIABLE (DUNIFORM(3,8,9));
+
+MASTERS         STORAGE 2;
+
+BlockCount      EQU 4;
+WorkTime        EQU (30#24#60);
+WorkdayTime     EQU (8#60);
+
+GATE LR DisableEntrance,DISABLE; lr=1, if key disabled
+GENERATE    v$DeviceEntrance;
+DISABLE SPLIT       (BlockCount-1);
+
+ENTER       MASTERS;
+ADVANCE     v$BlockRepair;
+LEAVE       MASTERS;
+
+GATHER      BlockCount;
+ASSEMBLE    BlockCount;
+
+ENTER       MASTERS;
+ADVANCE     v$BlockSetting;
+LEAVE       MASTERS;
+TERMINATE;
+
+GENERATE    WorkdayTime;
+LOGIC i DisableEntrance; invert
+TERMINATE;
+
+terminate;
+
+GENERATE WorkTime;
+TERMINATE 1;
+START 1;
