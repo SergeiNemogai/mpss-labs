@@ -1,0 +1,35 @@
+;a = 20
+;b = 30
+;c = 130
+;d = 200
+
+GENERATE 30 ; b=30
+PRIORITY 1
+QUEUE Q_obcn
+PREEMPT stanok
+DEPART Q_obcn
+ADVANCE 20 ; a=20
+RETURN stanok
+TERMINATE
+
+GENERATE 130 ; c=130
+PRIORITY 2
+QUEUE Q_sroch
+PREEMPT stanok,PR ;priority mode
+DEPART Q_sroch
+ADVANCE 20 ; a=20
+RETURN stanok
+TERMINATE
+
+GENERATE 200 ; d=200
+PRIORITY 3
+QUEUE Q_sverh_sroch
+PREEMPT stanok,PR
+DEPART Q_sverh_sroch
+ADVANCE 20 ; a=20
+RETURN stanok
+TERMINATE
+
+GENERATE (480)
+TERMINATE 1
+START 1

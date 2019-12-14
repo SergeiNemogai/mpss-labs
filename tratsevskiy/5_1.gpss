@@ -1,0 +1,26 @@
+;a = 3
+;b = 4±2
+;c = 2
+;d = 30
+;e = 5
+
+ustroystvo STORAGE 3 ; a=3
+GENERATE 4,2 ; b=4±2
+QUEUE LIN
+ENTER ustroystvo
+DEPART LIN
+ADVANCE 2 ; c=2
+LEAVE ustroystvo
+TERMINATE
+
+GENERATE 2
+QUEUE pereriv
+SUNAVAIL ustroystvo
+DEPART pereriv
+ADVANCE 30 ; d=30
+SAVAIL ustroystvo
+TERMINATE
+
+GENERATE 480 
+TERMINATE 1
+START 1

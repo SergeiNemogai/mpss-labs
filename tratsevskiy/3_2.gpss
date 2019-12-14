@@ -1,0 +1,28 @@
+;a = 4
+;b = Uniform(6,8)
+;c = Exponential(11)
+;d = 10
+;e = 11
+
+remonter  STORAGE 2
+    GATE LR key,false
+    GENERATE (UNIFORM(1,6,8)) ;b=Uniform(6,8)
+    
+    false  SPLIT 3  ; a-1
+    ENTER remonter
+    ADVANCE (EXPONENTIAL(2,0,11)); c=Exponential(11)
+    LEAVE remonter
+    ASSEMBLE 4
+    ADVANCE (DUNIFORM(3,10,11)); d=10, e=11
+    TERMINATE
+    GENERATE 1440
+    LOGIC R key
+    TERMINATE
+    GENERATE 1440,,480
+    LOGIC S key
+    TERMINATE
+
+    GENERATE (1440#30)
+    TERMINATE 1
+    START 1
+

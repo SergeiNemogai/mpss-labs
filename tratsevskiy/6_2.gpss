@@ -1,0 +1,44 @@
+; a = 3
+; b = 2
+; c = 3
+; d = 7–10
+; e = число занятых красящих манипуляторов
+
+
+INITIAL   x$parm_e,0
+pokraska	STORAGE 3
+tablica	TABLE parm_e,1,60,10
+;А - аргумент таблицы (-):
+;В - верхняя граница нижнего интервала;
+;С - ширина интервала;
+;D - число интервалов;
+
+GENERATE 1
+SELECT E 1,1,3,0,F,min_och
+SEIZE p1
+ADVANCE 3; a=3
+RELEASE p1
+
+next QUEUE p1 
+ENTER pokraska    
+DEPART p1        
+ADVANCE 2; b=2
+COUNT GE 2,1,3,1,FR
+
+SAVEVALUE parm_e,p2
+TABULATE tablica
+;При входе транзакта в блок TABULATE_tablica, связанный с конкретной
+;таблицей,опе-ранд param_e вычисляется и заносится в эту таблицу. 
+LEAVE pokraska
+SEIZE manipulator
+ADVANCE 3; c=3
+RELEASE manipulator
+TRANSFER ,term
+
+min_och	SELECT MIN 1,1,3,,Q,next
+TRANSFER ,next
+
+term TERMINATE
+GENERATE (960)
+TERMINATE 1
+START 1

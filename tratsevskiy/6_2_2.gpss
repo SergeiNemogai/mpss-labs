@@ -1,0 +1,44 @@
+; a = 3
+; b = 2
+; c = 3
+; d = 7–10
+; e = число занятых красящих манипуляторов
+
+manip1 EQU 1
+manip2 EQU 2
+manip3 EQU 3
+;EQU - ставит в соответствие номеру объекта символьное обозначение.
+
+manip1 STORAGE 4
+manip2 STORAGE 4
+manip3 STORAGE 4
+
+check MATRIX,1,16
+INITIAL X$hour
+
+GENERATE 8.5,1.5 ; d=7—10
+SELECT MIN 1,1,3,,S
+
+SEIZE p1
+ADVANCE 3 ; a=3
+RELEASE p1
+
+ENTER p1
+ADVANCE 2; b=2
+LEAVE p1
+
+SEIZE p1
+ADVANCE 3 ; c=3
+RELEASE p1
+
+TERMINATE
+
+GENERATE 60
+COUNT GE 1,1,3,1,SR
+MSAVEVALUE check,1,x$hour,p1
+SAVEVALUE hour+,1
+TERMINATE
+
+GENERATE (60#8#2)
+TERMINATE 1
+START 1

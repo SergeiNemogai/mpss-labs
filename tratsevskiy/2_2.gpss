@@ -1,0 +1,45 @@
+sklad STORAGE 140 ; b=140
+car	STORAGE 12 ; e=12
+razg STORAGE 3
+zagr STORAGE 5
+
+	GENERATE (EXPONENTIAL(1,0,60/7)) ; a=7
+	QUEUE qrazgr
+	ASSIGN 1,(DUNIFORM(2,4,10))
+	ASSIGN 2,p1
+	ENTER razg
+	DEPART qrazgr
+
+m_razgr	ADVANCE (UNIFORM(3,4,12))
+	ENTER sklad
+	LOOP 1,m_razgr
+	LEAVE razg
+	TRANSFER .350,,m_zakcar ; c=35
+	QUEUE qcar
+	ENTER car
+	DEPART qcar
+	ENTER zagr
+
+m_sklcar ADVANCE (UNIFORM(4,4,12))
+	LEAVE sklad
+	LOOP 2,m_sklcar
+	LEAVE zagr
+	ADVANCE (UNIFORM(5,60,300))
+	LEAVE car
+	TERMINATE
+
+m_zakcar ADVANCE (UNIFORM(6,300,1200))
+	QUEUE qzagr
+	ENTER zagr
+	DEPART qzagr
+	
+m_zakcp	ADVANCE (UNIFORM(7,4,12))
+	LEAVE sklad
+	LOOP 2,m_zakcp
+	LEAVE zagr
+	ADVANCE (UNIFORM(8,60,300))
+	TERMINATE
+
+	GENERATE (1440#365)
+	TERMINATE 1
+	START 1

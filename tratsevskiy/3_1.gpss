@@ -1,0 +1,24 @@
+;a = 4
+;c = 260
+;d = 280
+;e = 10
+;f = 11
+
+remonter  STORAGE 2
+INITIAL X$detal,260 ; c=260
+INITIAL X$obnova,280 ; d=280
+GENERATE (POISSON(1,5))
+ADVANCE (DUNIFORM(2,10,11)) ; e=10, f=11
+ASSIGN 1,(DUNIFORM(3,3,7))
+TEST GE detal,p1,term
+ENTER  remonter
+
+remont ADVANCE (NORMAL(4,4,0.5)) ;a=4
+    LOOP 1,remont
+    SAVEVALUE X$detal-,p1
+    LEAVE remonter
+term TERMINATE
+    GENERATE (1440)
+    SAVEVALUE detal,X$obnova
+    TERMINATE 1
+START 30
